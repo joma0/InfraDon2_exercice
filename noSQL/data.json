@@ -1,10 +1,27 @@
-"id" : "", 
-"identity" : {
-    "lastname" : "",
-    "firstname" : "", 
-}, 
-"adress" : {
-    "street" : "",
-    "city" : "",
-},
-"birthdate" : "" 
+{
+  "no_article": "",
+  "author": "",
+  "publish_date": "",
+  "content": {
+    "title": "",
+    "extract": "",
+    "full_text": ""
+  },
+  "comments": [
+    {
+      "comment": "",
+      "author": "",
+      "likes": ""
+    },
+    {
+      "comment": "",
+      "author": "",
+      "likes": ""
+    },
+    {
+      "comment": "",
+      "author": "",
+      "likes": ""
+    }
+  ]
+}
