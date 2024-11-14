@@ -2,13 +2,11 @@
   <div class="about">
     <h1>This is my page for noSQL</h1>
     <h2>Nombre de post: {{ postsData.length }}</h2>
-    <ul> {{ postsData }}
+    <ul>
       <li v-for="post in postsData" :key="post._id">
-        <div class="ucfirst">{{ post.post_name }}<em style="font-size: x-small;"
-            v-if="post.attributes?.creation_date">
-            - {{ post.attributes?.creation_date }}
-
-            {{ post }}
+        <div class="ucfirst">{{ post.doc.post_name }}<em style="font-size: x-small;"
+            v-if="post.doc.attributes?.creation_date">
+            - {{ post.doc.attributes?.creation_date }}
           </em>
         </div>
       </li>
@@ -87,19 +85,20 @@ export default {
 
     createAndAddDemoDocument(){
       const document = {
-
+        doc: {
           post_name: "article_demo",
           post_content: "Ceci est un article demo",
           attributes: {
             creation_date: "2024-09-09"
           }  
+        }
       }
       this.addDocument(document);
     },
 
     addDocument (document: Omit<Post, '_id'>) {
       if(this.storage) {
-        this.storage.post(document).then((result) => {
+        this.storage.post(document.doc).then((result) => {
           this.fetchData();
         }).catch((error) => {
           console.log('Failed to add document', error);
