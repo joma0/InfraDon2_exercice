@@ -1,27 +1,7 @@
 {
-  "no_article": "",
-  "author": "",
-  "publish_date": "",
-  "content": {
-    "title": "",
-    "extract": "",
-    "full_text": ""
-  },
-  "comments": [
-    {
-      "comment": "",
-      "author": "",
-      "likes": ""
-    },
-    {
-      "comment": "",
-      "author": "",
-      "likes": ""
-    },
-    {
-      "comment": "",
-      "author": "",
-      "likes": ""
-    }
-  ]
+  "post_name": "premier post",
+  "post_content": "Ceci est le contenu du premier post",
+  "attributes": {
+    "creation_date": "2024-10-31"
+  }
 }
