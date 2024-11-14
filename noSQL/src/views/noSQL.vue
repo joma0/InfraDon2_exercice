@@ -35,12 +35,13 @@ import PouchDB from 'pouchdb';
 //structure d'un élément de la base de données
 declare interface Post {
     _id: string,  
-    post_name: string,
-    post_content: string,
-    attributes: {
-      creation_date: string
+    doc: {
+      post_name: string,
+      post_content: string,
+      attributes: {
+        creation_date: string
+      }
     }
-  
 }
 
 export default {
@@ -149,8 +150,6 @@ export default {
   }
 
 }
-
-
 </script>
 
 
