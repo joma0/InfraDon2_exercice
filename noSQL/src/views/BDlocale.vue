@@ -33,6 +33,8 @@ import PouchDB from 'pouchdb'
 import { isDeclarationStatement } from 'typescript'
 import { jsx } from 'vue/jsx-runtime'
 
+//Ceci est un test pour github
+
 //définit la structure d'un document de la DB
 declare interface Post {
   _id: string
