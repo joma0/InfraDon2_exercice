@@ -18,9 +18,14 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/noSQL',
-      name: 'noSQL',
-      component: () => import('../views/noSQL.vue')
+      path: '/BDdistante',
+      name: 'BDdistante',
+      component: () => import('../views/BDdistante.vue')
+    },
+    {
+      path: '/BDlocale',
+      name: 'BDlocale',
+      component: () => import('../views/BDlocale.vue')
     }
   ]
 })

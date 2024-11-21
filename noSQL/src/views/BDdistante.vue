@@ -8,6 +8,8 @@
             v-if="post.doc.attributes?.creation_date">
             - {{ post.doc.attributes?.creation_date }}
           </em>
+          <button @click="updateDocument(post.doc._id)">Modifier</button>
+          <button @click="deleteDocument(post.doc._id)">Supprimer</button>
         </div>
       </li>
     </ul>
@@ -125,12 +127,14 @@ export default {
     },
 
     deleteDocument(id: string){
+      console.log(id); 
       if(this.storage){
         const storage = this.storage; 
         storage.get(id).then((document: any) => {
           return storage.remove(document);
         }).then(() => {
           console.log('Document removed successfully'); 
+          this.fetchData(); 
         }).catch((err) => {
           console.log('Failed to remove document', err)
         })
