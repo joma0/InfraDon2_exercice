@@ -54,6 +54,7 @@
           </div> -->
           <!-- </div> -->
           <br />
+          <button @click="editDocument(post._id)">Editer</button>
           <button @click="deleteDocument(post._id, post._rev)">Supprimer</button>
         </div>
       </li>
@@ -259,7 +260,7 @@ export default {
         const db = this.db
         db.get(id)
           .then((document: any) => {
-            document.post_content = 'Ceci est le contenu modifié'
+            document.post_content = document.post_content + 'Contenu modifié'
             return db.put(document)
           })
           .then(() => {
