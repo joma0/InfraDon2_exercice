@@ -80,6 +80,8 @@ import { jsx } from 'vue/jsx-runtime'
 import pouchdbFind from 'pouchdb-find'
 PouchDB.plugin(pouchdbFind)
 
+//Ceci est un test pour github
+
 //définit la structure d'un document de la DB
 declare interface Post {
   _id: string
