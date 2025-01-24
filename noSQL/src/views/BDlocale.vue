@@ -8,12 +8,14 @@
         <button @click="updateDistantDB()">Envoyer</button>
         <button @click="updateLocalDB()">Réceptionner</button>
       </div>
+      <br />
 
       <em style="font-size: x-small">Générer des document demo</em>
       <div>
         <button @click="generateRandomDocuments(1)">1 document</button>
         <button @click="generateRandomDocuments(50)">50 documents</button>
       </div>
+      <br />
 
       <em style="font-size: x-small">Ajouter un document</em>
       <form id="addingDocument" @submit.prevent="createDocumentWithForm">
@@ -31,7 +33,22 @@
         </div>
         <button id="buttonAddDocument" type="submit">Ajouter un post</button>
       </form>
+      <br />
+
+      <em style="font-size: x-small">Effectuer une recherche</em>
+      <form id="search" @submit.prevent="queryIndex">
+        <div>
+          <p>Essayez un des mots suivants : fruits, thermos, chocolat, sandwich</p>
+          <label for="keyword">Mot-clé</label>
+          <input id="keyword" type="text" v-model="query" />
+        </div>
+        <button id="buttonSearch" type="submit">Rechercher</button>
+      </form>
+      <form id="search" @submit.prevent="fetchData">
+        <button id="buttonClearSearch" type="submit">Réinitialiser</button>
+      </form>
     </div>
+    <br />
 
     <h2>Mes posts</h2>
     <em style="font-size: x-small">{{ postsData.length }} posts</em>
@@ -80,8 +97,6 @@ import { jsx } from 'vue/jsx-runtime'
 import pouchdbFind from 'pouchdb-find'
 PouchDB.plugin(pouchdbFind)
 
-//Ceci est un test pour github
-
 //définit la structure d'un document de la DB
 declare interface Post {
   _id: string
@@ -115,7 +130,9 @@ export default {
         media: [] as File[]
       },
       //tableau qui stocke les url des médias de chaque post
-      mediaUrls: {} as { [postId: string]: string[] } // Clé = postId, Valeur = tableau des URLs des médias
+      mediaUrls: {} as { [postId: string]: string[] }, // Clé = postId, Valeur = tableau des URLs des médias
+      //pour la recherche par index
+      query: ''
     }
   },
 
@@ -301,7 +318,7 @@ export default {
     retrieveMediasOfForm(event: Event) {
       //input contient un objet FileList qui contient tous les fichiers sélectionnés
       const input = event.target as HTMLInputElement
-      if (input.files && input.files[0]) {
+      if (input.files) {
         this.newPost.media = Array.from(input.files)
       }
     },
@@ -403,35 +420,50 @@ export default {
           }
         })
           .then(function (result) {
-            console.log('Successfully created the index')
+            console.log('Successfully created the index' + result)
+            return db.getIndexes() // Vérifie les index disponibles
           })
           .catch(function (err) {
             console.log(err)
           })
       } else {
         console.warn('Base de données non initialisée')
+        return Promise.reject('Base de données non initialisée')
       }
     },
 
     //fonction pour faire une requête sur un index
-    queryIndex(word: string) {
+    queryIndex() {
       const db = ref(this.db).value
-      if (db) {
+
+      if (db && this.query) {
+        let keyword = this.query.toLowerCase()
         db.find({
           selector: {
-            $or: [{ post_name: { $regex: word } }, { post_content: { $regex: word } }]
+            //post_name: { $gte: null },
+            $or: [{ post_name: { $regex: keyword } }, { post_content: { $regex: keyword } }]
           },
-          fields: ['_id', 'post_name', 'post_content'],
-          sort: ['post_name']
+          fields: ['_id', 'post_name', 'post_content', '_attachments', 'attributes']
+          //sort: ['post_name']
         })
-          .then(function (result) {
-            console.log('Sucessfull')
+          .then((result) => {
+            console.log('Sucessfull', result.docs)
+            //this.postsData = result.docs
+            // On mappe les docs pour s'assurer qu'ils correspondent au type Post
+            this.postsData = result.docs.map((doc: any) => ({
+              _id: doc._id,
+              _rev: doc._rev,
+              post_name: doc.post_name || '',
+              post_content: doc.post_content || '',
+              _attachments: doc._attachments || {},
+              attributes: doc.attributes || {}
+            })) as Post[] // On force ensuite le type à Post[]
           })
           .catch(function (err) {
             console.log(err)
           })
       } else {
-        console.warn('Base de données non initialisée')
+        console.warn('Base de données non initialisée ou mot-clé vide')
       }
     },
 
@@ -488,12 +520,15 @@ export default {
     }
   },
 
-  mounted() {
-    this.initDatabase()
-    console.log(this.createNewIndex())
-    this.queryIndex('chocolat')
-    this.fetchData()
-    this.watchRemoteDatabase()
+  async mounted() {
+    try {
+      await this.initDatabase() // Initialise la base locale
+      await this.createNewIndex() // Crée l'index
+      await this.fetchData() // Charge les données
+      this.watchRemoteDatabase() // Écoute les changements
+    } catch (err) {
+      console.error("Erreur lors de l'initialisation :", err)
+    }
   }
 }
 </script>
